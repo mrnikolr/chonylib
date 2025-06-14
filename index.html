@@ -73,10 +73,11 @@
 
   <script>
     if (window.top !== window.self) {
-    window.addEventListener('DOMContentLoaded', function() {
-      document.body.innerHTML = '<div id="message">Ab to copy mat kar chutiye</div>';
-    });
-  }
+      window.addEventListener('DOMContentLoaded', function() {
+        document.body.innerHTML = '<div id="message">Ab to copy mat kar chutiye</div>';
+      });
+    }
+
     const container = document.getElementById('matches-container');
 
     fetch('https://raw.githubusercontent.com/drmlive/sliv-live-events/main/sonyliv.json')
@@ -95,7 +96,7 @@
         const cards = data.matches.map(match => `
   <article class="match-card rounded-xl overflow-hidden relative ${match.isLive ? 'live-border' : ''}">
     <div class="relative aspect-video">
-      <img src="${match.src}" alt="${match.event_name}" class="w-full h-full object-cover" loading="lazy">
+      <img src="${match.src || ''}" alt="${match.event_name || ''}" class="w-full h-full object-cover" loading="lazy">
     </div>
     <div class="p-4 space-y-3">
       <div class="flex flex-wrap gap-2">
@@ -104,25 +105,27 @@
             <span class="live-pulse w-2 h-2 bg-white rounded-full"></span>
             <span>LIVE</span>
           </span>` : ''}
-        <span class="px-3 py-1 bg-gray-800 text-gray-300 text-xs rounded-full">${match.event_category}</span>
-        <span class="px-3 py-1 bg-gray-800 text-gray-300 text-xs rounded-full">${match.audioLanguageName}</span>
+        <span class="px-3 py-1 bg-gray-800 text-gray-300 text-xs rounded-full">${match.event_category || ''}</span>
+        <span class="px-3 py-1 bg-gray-800 text-gray-300 text-xs rounded-full">${match.audioLanguageName || ''}</span>
       </div>
       <div class="space-y-2">
-        <h2 class="text-xl font-bold text-gray-100 truncate">${match.event_name}</h2>
-        <p class="text-sm text-gray-400">${match.match_name}</p>
+        <h2 class="text-xl font-bold text-gray-100 truncate">${match.event_name || ''}</h2>
+        <p class="text-sm text-gray-400">${match.match_name || ''}</p>
         <div class="flex items-center text-sm text-gray-400 space-x-2">
           <i class="fas fa-tv"></i>
-          <span>${match.broadcast_channel}</span>
+          <span>${match.broadcast_channel || ''}</span>
         </div>
       </div>
       <div class="pt-4">
-        ${match.isLive ? `
-          <a href="https://fmcplayer.pages.dev/id=${match.dai_url}" class="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-lg font-medium transition-all transform hover:scale-[1.02]">
-  <i class="fas fa-play"></i><span>Watch Live</span>
-</a>` : `
+        ${match.isLive && match.video_url ? `
+          <a href="https://fmcplayer.pages.dev/?url=${encodeURIComponent(match.video_url)}"
+             target="_blank"
+             class="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-lg font-medium transition-all transform hover:scale-[1.02]">
+            <i class="fas fa-play"></i><span>Watch Live</span>
+          </a>` : `
           <div class="relative group">
             <button class="w-full flex items-center justify-center space-x-2 bg-gray-700/50 text-gray-400 px-6 py-3 rounded-lg font-medium cursor-not-allowed" disabled>
-              <i class="far fa-clock"></i><span>Event Not Started</span>
+              <i class="far fa-clock"></i><span>${match.isLive ? 'Stream Not Available' : 'Event Not Started'}</span>
             </button>
             <div class="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm"></div>
           </div>`}
@@ -130,7 +133,6 @@
     </div>
   </article>
 `).join('');
-
 
         container.innerHTML = `<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">${cards}</div>`;
       })

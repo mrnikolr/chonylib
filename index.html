@@ -80,7 +80,7 @@
 
     const container = document.getElementById('matches-container');
 
-    fetch('https://raw.githubusercontent.com/drmlive/sliv-live-events/main/sonyliv.json')
+    fetch('https://raw.githubusercontent.com/abid58b/SonyLivPlayList/refs/heads/main/sonyliv.json')
       .then(response => response.json())
       .then(data => {
         if (!data.matches || data.matches.length === 0) {
